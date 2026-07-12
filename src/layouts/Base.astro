@@ -1,0 +1,119 @@
+---
+import '../styles/global.css';
+import profile from '../data/profile.json';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+  showNav?: boolean;
+}
+
+const {
+  title = profile.meta.seoTitle,
+  description = profile.meta.seoDescription,
+  noindex = false,
+  showNav = true,
+} = Astro.props;
+
+const site = profile.meta.siteUrl.replace(/\/$/, '');
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = `${site}/images/og-image.png`;
+
+const sections = profile.sections;
+const navItems = [
+  sections.about && { href: '/#about', label: 'About' },
+  sections.experience && { href: '/#experience', label: 'Experience' },
+  sections.education && { href: '/#education', label: 'Education' },
+  sections.skills && { href: '/#skills', label: 'Skills' },
+  sections.highlights && { href: '/#highlights', label: 'Highlights' },
+  sections.contact && { href: '/#contact', label: 'Contact' },
+].filter(Boolean) as { href: string; label: string }[];
+
+// Schema.org structured data: Person + ProfilePage
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: profile.person.name,
+    description: profile.person.shortIntro,
+    url: site,
+    address: { '@type': 'PostalAddress', addressLocality: profile.person.location },
+    alumniOf: profile.education.map((e) => ({ '@type': 'EducationalOrganization', name: e.institution })),
+    sameAs: profile.socialLinks.map((l) => l.url).filter((u) => u && !u.includes('REPLACE-ME')),
+  },
+};
+
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#232A31" />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content={profile.person.name} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    {showNav && (
+      <nav class="site-nav" aria-label="Primary">
+        <div class="wrap">
+          <a class="brand" href="/">{profile.person.name}</a>
+          <ul>
+            {navItems.map((item) => (
+              <li><a href={item.href}>{item.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+    )}
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <ul aria-label="Profiles">
+          {profile.socialLinks
+            .filter((l) => l.url && !l.url.includes('REPLACE-ME'))
+            .map((l) => (
+              <li>
+                <a href={l.url} rel="noopener noreferrer" target="_blank">{l.label}</a>
+              </li>
+            ))}
+        </ul>
+        <p>{profile.privacyNotice}</p>
+        <p>
+          © {year} {profile.person.name}.
+          {profile.meta.lastUpdated && <span> Last updated {profile.meta.lastUpdated}.</span>}
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

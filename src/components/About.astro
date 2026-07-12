@@ -1,0 +1,13 @@
+---
+import profile from '../data/profile.json';
+const paragraphs = profile.about ?? [];
+---
+{profile.sections.about && paragraphs.length > 0 && (
+  <section class="block" id="about" aria-labelledby="about-heading">
+    <div class="wrap">
+      <p class="eyebrow">About</p>
+      <h2 id="about-heading">A bit about me</h2>
+      {paragraphs.map((para) => <p>{para}</p>)}
+    </div>
+  </section>
+)}

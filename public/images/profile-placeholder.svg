@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" role="img" aria-label="Placeholder portrait">
+  <rect width="480" height="480" fill="#EFEAE1"/>
+  <circle cx="240" cy="185" r="85" fill="#C9BFAF"/>
+  <path d="M75 480c0-95 74-160 165-160s165 65 165 160Z" fill="#C9BFAF"/>
+  <text x="240" y="452" font-family="system-ui, sans-serif" font-size="22" fill="#6E6455" text-anchor="middle">Replace with a photo of Damien</text>
+</svg>

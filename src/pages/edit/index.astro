@@ -1,0 +1,424 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+<Base
+  title="Content editor — damiengranet.com"
+  description="Private content editor for damiengranet.com"
+  noindex={true}
+  showNav={false}
+>
+  <div class="wrap editor">
+    <p class="eyebrow">Editor</p>
+    <h1>Update your website</h1>
+    <p>
+      This page edits the information shown on damiengranet.com. Change what you like,
+      press <strong>Check &amp; preview</strong>, then <strong>Download profile.json</strong>
+      and upload it to GitHub — step-by-step instructions are at the bottom of this page,
+      and in <code>CONTENT-EDITING-GUIDE.md</code>.
+    </p>
+    <p>
+      Nothing you type here leaves your browser. This editor cannot publish changes by
+      itself, so you can experiment safely.
+    </p>
+
+    <div id="status" role="status" aria-live="polite"></div>
+    <form id="editor-form" novalidate>
+      <p><em>Loading current content…</em></p>
+    </form>
+
+    <div class="editor-actions">
+      <button type="button" class="button" id="validate-btn">Check &amp; preview</button>
+      <button type="button" class="button primary" id="download-btn">Download profile.json</button>
+      <a class="button" id="github-link" href="#" rel="noopener noreferrer" target="_blank">
+        Open this file on GitHub
+      </a>
+    </div>
+
+    <section id="preview-panel" hidden>
+      <h2>Preview</h2>
+      <p class="where">A plain summary of what will appear on the site.</p>
+      <div id="preview"></div>
+    </section>
+
+    <section class="editor-help">
+      <h2>How to publish your changes</h2>
+      <ol>
+        <li>Press <strong>Check &amp; preview</strong> and fix anything flagged in red.</li>
+        <li>Press <strong>Download profile.json</strong>. The file lands in your Downloads folder.</li>
+        <li>Press <strong>Open this file on GitHub</strong> and sign in if asked.</li>
+        <li>On GitHub, select everything in the file (Ctrl/Cmd&nbsp;+&nbsp;A), delete it, then open your downloaded <code>profile.json</code> in a text editor, copy everything, and paste it in. (Or use <em>Add file → Upload files</em> in the <code>src/data</code> folder to replace it.)</li>
+        <li>Press the green <strong>Commit changes</strong> button.</li>
+        <li>Wait a few minutes — the site rebuilds and republishes automatically.</li>
+      </ol>
+    </section>
+  </div>
+
+  <style>
+    .editor { padding-block: 3rem; }
+    #editor-form fieldset {
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 1.25rem; margin: 0 0 1.5rem; background: var(--paper-raised);
+    }
+    #editor-form legend { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; padding-inline: 0.4rem; }
+    #editor-form label { display: grid; gap: 0.3rem; margin-bottom: 0.9rem; font-weight: 600; font-size: 0.95rem; }
+    #editor-form .hint { font-weight: 400; color: var(--muted); font-size: 0.85rem; }
+    #editor-form input[type="text"], #editor-form input[type="url"], #editor-form input[type="email"], #editor-form textarea {
+      font: inherit; padding: 0.55rem 0.7rem; border: 1px solid var(--line);
+      border-radius: 8px; width: 100%; background: var(--paper);
+    }
+    #editor-form input[aria-invalid="true"], #editor-form textarea[aria-invalid="true"] { border-color: #b3261e; }
+    .field-error { color: #b3261e; font-weight: 600; font-size: 0.85rem; }
+    .item {
+      border: 1px dashed var(--line); border-radius: 8px;
+      padding: 1rem; margin-bottom: 1rem;
+    }
+    .item-toolbar { display: flex; gap: 0.5rem; justify-content: flex-end; margin-bottom: 0.6rem; flex-wrap: wrap; }
+    .mini {
+      font: inherit; font-size: 0.85rem; padding: 0.35rem 0.75rem;
+      border-radius: 999px; border: 1px solid var(--ink);
+      background: transparent; cursor: pointer; min-height: 40px;
+    }
+    .mini:hover { background: var(--ink); color: var(--paper); }
+    .editor-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-block: 1.5rem; }
+    .editor-actions .button { cursor: pointer; font: inherit; }
+    #status .ok { color: #1e6b32; font-weight: 600; }
+    #status .bad { color: #b3261e; font-weight: 600; }
+    #preview { border: 1px solid var(--line); border-radius: 10px; padding: 1.25rem; background: var(--paper-raised); }
+    .toggle-row { display: flex; align-items: center; gap: 0.6rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .toggle-row input { width: 1.2rem; height: 1.2rem; }
+    .editor-help { margin-top: 3rem; }
+  </style>
+
+  <script>
+    // ------------------------------------------------------------------
+    // damiengranet.com content editor
+    // Everything runs locally in the browser. There are no API keys or
+    // tokens here, and there must never be: this site is public static
+    // hosting. Publishing happens through GitHub's own web interface.
+    // ------------------------------------------------------------------
+    let data = null;
+
+    const form = document.getElementById('editor-form');
+    const statusBox = document.getElementById('status');
+
+    // --- helpers ------------------------------------------------------
+    // All values are written with textContent / .value only. Never
+    // innerHTML from data: that keeps the editor safe even if the JSON
+    // file contains markup.
+    function el(tag, attrs = {}, text = '') {
+      const node = document.createElement(tag);
+      for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+      if (text) node.textContent = text;
+      return node;
+    }
+
+    function field(labelText, value, onInput, opts = {}) {
+      const label = el('label');
+      label.append(labelText);
+      if (opts.hint) label.append(el('span', { class: 'hint' }, opts.hint));
+      const input = el(opts.multiline ? 'textarea' : 'input');
+      if (!opts.multiline) input.type = opts.type || 'text';
+      if (opts.multiline) input.rows = opts.rows || 3;
+      input.value = value ?? '';
+      if (opts.required) input.dataset.required = 'true';
+      input.addEventListener('input', () => onInput(input.value));
+      label.append(input);
+      return label;
+    }
+
+    function toolbar(list, index, rerender) {
+      const bar = el('div', { class: 'item-toolbar' });
+      const up = el('button', { type: 'button', class: 'mini' }, '↑ Move up');
+      const down = el('button', { type: 'button', class: 'mini' }, '↓ Move down');
+      const remove = el('button', { type: 'button', class: 'mini' }, 'Remove');
+      up.addEventListener('click', () => {
+        if (index > 0) { [list[index - 1], list[index]] = [list[index], list[index - 1]]; rerender(); }
+      });
+      down.addEventListener('click', () => {
+        if (index < list.length - 1) { [list[index + 1], list[index]] = [list[index], list[index + 1]]; rerender(); }
+      });
+      remove.addEventListener('click', () => {
+        if (confirm('Remove this item? You can always add it back.')) { list.splice(index, 1); rerender(); }
+      });
+      bar.append(up, down, remove);
+      return bar;
+    }
+
+    function addButton(labelText, onClick) {
+      const btn = el('button', { type: 'button', class: 'mini' }, labelText);
+      btn.addEventListener('click', onClick);
+      return btn;
+    }
+
+    // --- render -------------------------------------------------------
+    function render() {
+      form.textContent = '';
+
+      // Basics
+      const basics = el('fieldset');
+      basics.append(el('legend', {}, 'Basics'));
+      basics.append(field('Name', data.person.name, (v) => (data.person.name = v), { required: true }));
+      basics.append(field('Pronouns (optional)', data.person.pronouns, (v) => (data.person.pronouns = v)));
+      basics.append(field('Professional headline', data.person.headline, (v) => (data.person.headline = v), { required: true, hint: 'One line under your name, e.g. your role and study.' }));
+      basics.append(field('Short introduction', data.person.shortIntro, (v) => (data.person.shortIntro = v), { multiline: true, required: true, hint: 'Two or three friendly sentences shown at the top of the site.' }));
+      basics.append(field('Location (broad — suburb/city only, never a street address)', data.person.location, (v) => (data.person.location = v)));
+      basics.append(field('Profile image path', data.person.profileImage.src, (v) => (data.person.profileImage.src = v), { hint: 'e.g. /images/damien.jpg — upload the image to public/images/ on GitHub first.' }));
+      basics.append(field('Profile image description (alt text)', data.person.profileImage.alt, (v) => (data.person.profileImage.alt = v), { hint: 'Describes the photo for people using screen readers.' }));
+      form.append(basics);
+
+      // Section visibility
+      const vis = el('fieldset');
+      vis.append(el('legend', {}, 'Show or hide sections'));
+      for (const key of Object.keys(data.sections)) {
+        const row = el('label', { class: 'toggle-row' });
+        const box = el('input', { type: 'checkbox' });
+        box.checked = Boolean(data.sections[key]);
+        box.addEventListener('change', () => (data.sections[key] = box.checked));
+        row.append(box, key.charAt(0).toUpperCase() + key.slice(1));
+        vis.append(row);
+      }
+      form.append(vis);
+
+      // About paragraphs
+      const about = el('fieldset');
+      about.append(el('legend', {}, 'About — biography paragraphs'));
+      data.about.forEach((para, i) => {
+        const item = el('div', { class: 'item' });
+        item.append(toolbar(data.about, i, render));
+        item.append(field(`Paragraph ${i + 1}`, para, (v) => (data.about[i] = v), { multiline: true, rows: 4 }));
+        about.append(item);
+      });
+      about.append(addButton('+ Add paragraph', () => { data.about.push(''); render(); }));
+      form.append(about);
+
+      // Experience
+      const exp = el('fieldset');
+      exp.append(el('legend', {}, 'Experience — most recent first'));
+      data.experience.forEach((job, i) => {
+        const item = el('div', { class: 'item' });
+        item.append(toolbar(data.experience, i, render));
+        item.append(field('Role / job title', job.role, (v) => (job.role = v), { required: true }));
+        item.append(field('Organisation', job.organisation, (v) => (job.organisation = v), { required: true }));
+        item.append(field('Employment type (e.g. Part-time)', job.type, (v) => (job.type = v)));
+        item.append(field('Start (e.g. Nov 2023)', job.start, (v) => (job.start = v), { required: true }));
+        item.append(field('End (e.g. Present)', job.end, (v) => (job.end = v), { required: true }));
+        item.append(field('Location', job.location, (v) => (job.location = v)));
+        item.append(field('One-sentence summary', job.summary, (v) => (job.summary = v), { multiline: true }));
+        item.append(field('Extra details (one per line, optional)', (job.details || []).join('\n'), (v) => (job.details = v.split('\n').map((s) => s.trim()).filter(Boolean)), { multiline: true, rows: 4, hint: 'Shown under "More about this role".' }));
+        exp.append(item);
+      });
+      exp.append(addButton('+ Add a job', () => {
+        data.experience.push({ role: '', organisation: '', type: '', start: '', end: '', location: '', summary: '', details: [] });
+        render();
+      }));
+      form.append(exp);
+
+      // Education
+      const edu = el('fieldset');
+      edu.append(el('legend', {}, 'Education'));
+      data.education.forEach((entry, i) => {
+        const item = el('div', { class: 'item' });
+        item.append(toolbar(data.education, i, render));
+        item.append(field('Institution', entry.institution, (v) => (entry.institution = v), { required: true }));
+        item.append(field('Qualification', entry.qualification, (v) => (entry.qualification = v), { required: true }));
+        item.append(field('Field of study', entry.field, (v) => (entry.field = v)));
+        item.append(field('Start', entry.start, (v) => (entry.start = v)));
+        item.append(field('End', entry.end, (v) => (entry.end = v)));
+        item.append(field('Notes (activities, societies…)', entry.notes, (v) => (entry.notes = v), { multiline: true }));
+        edu.append(item);
+      });
+      edu.append(addButton('+ Add education', () => {
+        data.education.push({ institution: '', qualification: '', field: '', start: '', end: '', notes: '' });
+        render();
+      }));
+      form.append(edu);
+
+      // Skills
+      const skills = el('fieldset');
+      skills.append(el('legend', {}, 'Skills — grouped by category'));
+      data.skills.forEach((group, i) => {
+        const item = el('div', { class: 'item' });
+        item.append(toolbar(data.skills, i, render));
+        item.append(field('Category name', group.category, (v) => (group.category = v), { required: true }));
+        item.append(field('Skills (one per line)', (group.items || []).join('\n'), (v) => (group.items = v.split('\n').map((s) => s.trim()).filter(Boolean)), { multiline: true, rows: 4 }));
+        skills.append(item);
+      });
+      skills.append(addButton('+ Add a skill group', () => { data.skills.push({ category: '', items: [] }); render(); }));
+      form.append(skills);
+
+      // Highlights
+      const hl = el('fieldset');
+      hl.append(el('legend', {}, 'Highlights — projects and achievements'));
+      data.highlights.forEach((h, i) => {
+        const item = el('div', { class: 'item' });
+        item.append(toolbar(data.highlights, i, render));
+        item.append(field('Title', h.title, (v) => (h.title = v), { required: true }));
+        item.append(field('Description', h.description, (v) => (h.description = v), { multiline: true }));
+        item.append(field('Link (optional)', h.link, (v) => (h.link = v), { type: 'url' }));
+        item.append(field('Link label (optional)', h.linkLabel, (v) => (h.linkLabel = v)));
+        item.append(field('Date or date range (optional)', h.date, (v) => (h.date = v)));
+        item.append(field('Image path (optional)', h.image, (v) => (h.image = v), { hint: 'e.g. /images/project.jpg' }));
+        item.append(field('Image description (needed if an image is set)', h.imageAlt, (v) => (h.imageAlt = v)));
+        hl.append(item);
+      });
+      hl.append(addButton('+ Add a highlight', () => {
+        data.highlights.push({ title: '', description: '', link: '', linkLabel: '', image: '', imageAlt: '', date: '' });
+        render();
+      }));
+      form.append(hl);
+
+      // Interests
+      const ints = el('fieldset');
+      ints.append(el('legend', {}, 'Interests'));
+      data.interests.forEach((it, i) => {
+        const item = el('div', { class: 'item' });
+        item.append(toolbar(data.interests, i, render));
+        item.append(field('Interest', it.label, (v) => (it.label = v), { required: true }));
+        item.append(field('Short note (optional)', it.note, (v) => (it.note = v)));
+        item.append(field('Link (optional)', it.link, (v) => (it.link = v), { type: 'url' }));
+        ints.append(item);
+      });
+      ints.append(addButton('+ Add an interest', () => { data.interests.push({ label: '', note: '', link: '' }); render(); }));
+      form.append(ints);
+
+      // Contact & links
+      const contact = el('fieldset');
+      contact.append(el('legend', {}, 'Contact & links'));
+      contact.append(field('Contact intro sentence', data.contact.intro, (v) => (data.contact.intro = v), { multiline: true }));
+      contact.append(field('LinkedIn profile URL', data.contact.linkedin, (v) => (data.contact.linkedin = v), { type: 'url', hint: 'Your public LinkedIn address.' }));
+      contact.append(field('Public email alias (optional — never your personal email)', data.contact.emailAlias, (v) => (data.contact.emailAlias = v), { type: 'email', hint: 'e.g. hello@damiengranet.com. Leave blank to hide.' }));
+      contact.append(field('Contact form endpoint (optional)', data.contact.formEndpoint, (v) => (data.contact.formEndpoint = v), { type: 'url', hint: 'A Formspree (or similar) URL. Leave blank and no form is shown — the site never shows a form that goes nowhere.' }));
+      data.socialLinks.forEach((link, i) => {
+        const item = el('div', { class: 'item' });
+        item.append(toolbar(data.socialLinks, i, render));
+        item.append(field('Link label', link.label, (v) => (link.label = v), { required: true }));
+        item.append(field('URL', link.url, (v) => (link.url = v), { type: 'url', required: true }));
+        contact.append(item);
+      });
+      contact.append(addButton('+ Add a footer link', () => { data.socialLinks.push({ label: '', url: '' }); render(); }));
+      form.append(contact);
+
+      // Site settings
+      const meta = el('fieldset');
+      meta.append(el('legend', {}, 'Site settings'));
+      meta.append(field('Browser/search title', data.meta.seoTitle, (v) => (data.meta.seoTitle = v), { required: true }));
+      meta.append(field('Search description', data.meta.seoDescription, (v) => (data.meta.seoDescription = v), { multiline: true, hint: 'The blurb search engines and link previews show. One or two sentences.' }));
+      meta.append(field('Last updated (YYYY-MM-DD, optional)', data.meta.lastUpdated, (v) => (data.meta.lastUpdated = v)));
+      meta.append(field('GitHub repository (owner/name)', data.meta.githubRepo, (v) => { data.meta.githubRepo = v; setGithubLink(); }, { hint: 'Used by the "Open this file on GitHub" button.' }));
+      form.append(meta);
+    }
+
+    // --- validation (mirrors scripts/validate-content.mjs) -------------
+    function validate() {
+      const problems = [];
+      if (!data.person.name.trim()) problems.push('Name is required.');
+      if (!data.person.headline.trim()) problems.push('Headline is required.');
+      if (!data.person.shortIntro.trim()) problems.push('Short introduction is required.');
+      data.experience.forEach((j, i) => {
+        if (!j.role.trim() || !j.organisation.trim() || !j.start.trim() || !j.end.trim())
+          problems.push(`Experience item ${i + 1} needs a role, organisation, start and end.`);
+      });
+      data.education.forEach((e, i) => {
+        if (!e.institution.trim() || !e.qualification.trim())
+          problems.push(`Education item ${i + 1} needs an institution and qualification.`);
+      });
+      data.highlights.forEach((h, i) => {
+        if (!h.title.trim()) problems.push(`Highlight ${i + 1} needs a title.`);
+        if (h.image && !h.imageAlt.trim()) problems.push(`Highlight ${i + 1} has an image but no image description.`);
+      });
+      data.socialLinks.forEach((l, i) => {
+        if (!l.label.trim() || !l.url.trim()) problems.push(`Footer link ${i + 1} needs a label and URL.`);
+      });
+      for (const url of [data.contact.linkedin, data.contact.formEndpoint, ...data.socialLinks.map((l) => l.url)]) {
+        if (url && !/^(https?:\/\/|\/)/.test(url)) problems.push(`"${url}" doesn't look like a valid link (it should start with https://).`);
+      }
+      return problems;
+    }
+
+    function showStatus(problems) {
+      statusBox.textContent = '';
+      if (problems.length === 0) {
+        statusBox.append(el('p', { class: 'ok' }, '✓ Everything looks good.'));
+        return true;
+      }
+      statusBox.append(el('p', { class: 'bad' }, 'Please fix these before publishing:'));
+      const list = el('ul');
+      problems.forEach((p) => list.append(el('li', { class: 'field-error' }, p)));
+      statusBox.append(list);
+      statusBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return false;
+    }
+
+    function renderPreview() {
+      const panel = document.getElementById('preview-panel');
+      const target = document.getElementById('preview');
+      target.textContent = '';
+      target.append(el('h3', {}, data.person.name));
+      target.append(el('p', {}, data.person.headline));
+      target.append(el('p', {}, data.person.shortIntro));
+      if (data.sections.experience) {
+        target.append(el('h3', {}, 'Experience'));
+        data.experience.forEach((j) => target.append(el('p', {}, `${j.role} — ${j.organisation} (${j.start} – ${j.end})`)));
+      }
+      if (data.sections.education) {
+        target.append(el('h3', {}, 'Education'));
+        data.education.forEach((e) => target.append(el('p', {}, `${e.qualification}, ${e.institution}`)));
+      }
+      panel.hidden = false;
+    }
+
+    function setGithubLink() {
+      const link = document.getElementById('github-link');
+      const repo = (data?.meta?.githubRepo || '').trim();
+      if (repo && !repo.includes('REPLACE-ME')) {
+        link.href = `https://github.com/${repo}/edit/main/src/data/profile.json`;
+        link.removeAttribute('aria-disabled');
+      } else {
+        link.href = '#';
+        link.setAttribute('aria-disabled', 'true');
+        link.addEventListener('click', (e) => {
+          if (link.getAttribute('aria-disabled') === 'true') {
+            e.preventDefault();
+            alert('Set the GitHub repository in "Site settings" first (e.g. damiengranet/damiengranet.com).');
+          }
+        });
+      }
+    }
+
+    // --- actions ------------------------------------------------------
+    document.getElementById('validate-btn').addEventListener('click', () => {
+      if (showStatus(validate())) renderPreview();
+    });
+
+    document.getElementById('download-btn').addEventListener('click', () => {
+      if (!showStatus(validate())) return;
+      const today = new Date().toISOString().slice(0, 10);
+      data.meta.lastUpdated = data.meta.lastUpdated || today;
+      const blob = new Blob([JSON.stringify(data, null, 2) + '\n'], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = el('a', { href: url, download: 'profile.json' });
+      document.body.append(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      statusBox.append(el('p', { class: 'ok' }, '✓ Downloaded. Now follow the publish steps below.'));
+    });
+
+    // --- boot ---------------------------------------------------------
+    fetch('/profile-data.json')
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((json) => {
+        data = json;
+        render();
+        setGithubLink();
+      })
+      .catch(() => {
+        form.textContent = '';
+        form.append(el('p', { class: 'field-error' },
+          'Could not load the current content. If you are running locally, make sure "npm run dev" is running; on the live site, try refreshing.'));
+      });
+  </script>
+</Base>

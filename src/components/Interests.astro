@@ -1,0 +1,24 @@
+---
+import profile from '../data/profile.json';
+const items = profile.interests ?? [];
+---
+{profile.sections.interests && items.length > 0 && (
+  <section class="block" id="interests" aria-labelledby="interests-heading">
+    <div class="wrap">
+      <p class="eyebrow">Interests</p>
+      <h2 id="interests-heading">Outside of work</h2>
+      <ul class="interests">
+        {items.map((item) => (
+          <li>
+            <span class="label">
+              {item.link
+                ? <a href={item.link} rel="noopener noreferrer" target="_blank">{item.label}</a>
+                : item.label}
+            </span>
+            {item.note && <> — <span class="note">{item.note}</span></>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}

@@ -1,0 +1,22 @@
+---
+import profile from '../data/profile.json';
+const entries = profile.education ?? [];
+---
+{profile.sections.education && entries.length > 0 && (
+  <section class="block" id="education" aria-labelledby="education-heading">
+    <div class="wrap">
+      <p class="eyebrow">Education</p>
+      <h2 id="education-heading">Education</h2>
+      {entries.map((e) => (
+        <article class="entry">
+          <p class="when">{e.start} – {e.end}</p>
+          <div>
+            <h3>{e.qualification}</h3>
+            <p class="where"><span class="org">{e.institution}</span></p>
+            {e.notes && <p>{e.notes}</p>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+)}

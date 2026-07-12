@@ -1,0 +1,29 @@
+---
+import profile from '../data/profile.json';
+const items = profile.highlights ?? [];
+---
+{profile.sections.highlights && items.length > 0 && (
+  <section class="block" id="highlights" aria-labelledby="highlights-heading">
+    <div class="wrap">
+      <p class="eyebrow">Highlights</p>
+      <h2 id="highlights-heading">Selected highlights</h2>
+      <div class="cards">
+        {items.map((item) => (
+          <article class="card">
+            {item.image && (
+              <img src={item.image} alt={item.imageAlt || ''} loading="lazy" decoding="async" />
+            )}
+            <h3>{item.title}</h3>
+            {item.date && <p class="date">{item.date}</p>}
+            <p>{item.description}</p>
+            {item.link && (
+              <a href={item.link} rel="noopener noreferrer" target="_blank">
+                {item.linkLabel || 'Learn more'}
+              </a>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

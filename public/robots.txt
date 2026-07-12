@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /edit/
+
+Sitemap: https://damiengranet.com/sitemap-index.xml

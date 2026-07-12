@@ -1,0 +1,76 @@
+---
+import profile from '../data/profile.json';
+
+const c = profile.contact;
+const hasLinkedIn = c.linkedin && !c.linkedin.includes('REPLACE-ME');
+const hasEmail = Boolean(c.emailAlias);
+const hasForm = Boolean(c.formEndpoint);
+const hasAnyMethod = hasLinkedIn || hasEmail || hasForm;
+---
+{profile.sections.contact && (
+  <section class="block" id="contact" aria-labelledby="contact-heading">
+    <div class="wrap">
+      <p class="eyebrow">Contact</p>
+      <h2 id="contact-heading">Get in touch</h2>
+      <p>{c.intro}</p>
+
+      {hasAnyMethod ? (
+        <>
+          <div class="contact-links">
+            {hasLinkedIn && (
+              <a class="button" href={c.linkedin} rel="noopener noreferrer" target="_blank">
+                Message me on LinkedIn
+              </a>
+            )}
+            {hasEmail && (
+              <a class="button" href={`mailto:${c.emailAlias}`}>Email {c.emailAlias}</a>
+            )}
+          </div>
+
+          {hasForm && (
+            <form
+              class="contact-form"
+              action={c.formEndpoint}
+              method="POST"
+              aria-label="Contact form"
+            >
+              <label>
+                Your name
+                <input type="text" name="name" required autocomplete="name" />
+              </label>
+              <label>
+                Your email
+                <input type="email" name="email" required autocomplete="email" />
+              </label>
+              <label>
+                Message
+                <textarea name="message" rows="5" required></textarea>
+              </label>
+              {/* Honeypot: hidden from people, tempting to bots. Most form
+                  providers discard submissions where this is filled in. */}
+              <label class="honeypot" aria-hidden="true">
+                Leave this field empty
+                <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+              </label>
+              <div>
+                <button class="button primary" type="submit">Send message</button>
+              </div>
+              <p class="where">
+                Messages are delivered by the configured form provider and go straight to
+                Damien's inbox. This site itself stores nothing.
+              </p>
+            </form>
+          )}
+        </>
+      ) : (
+        <p>
+          <em>
+            Contact links are being set up — check back soon. (Editor's note: add a
+            LinkedIn URL, email alias, or form endpoint in <code>src/data/profile.json</code>
+            to replace this message.)
+          </em>
+        </p>
+      )}
+    </div>
+  </section>
+)}

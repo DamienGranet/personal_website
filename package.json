@@ -1,0 +1,19 @@
+{
+  "name": "damiengranet.com",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal biography and professional profile website for Damien Granet",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "npm run validate-content && astro build",
+    "preview": "astro preview",
+    "lint": "astro check || true",
+    "validate-content": "node scripts/validate-content.mjs",
+    "test": "node scripts/validate-content.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.2.1",
+    "astro": "^5.1.0"
+  }
+}

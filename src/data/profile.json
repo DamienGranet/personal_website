@@ -1,0 +1,188 @@
+{
+  "meta": {
+    "siteUrl": "https://damiengranet.com",
+    "seoTitle": "Damien Granet — Governance, Communications & International Relations",
+    "seoDescription": "Damien Granet — governance and communications at Platypus R&D, International Relations (Honours) at the ANU, and drummer of Bronze Age Collapse.",
+    "githubRepo": "REPLACE-ME/damiengranet.com",
+    "lastUpdated": "2026-07-11"
+  },
+  "person": {
+    "name": "Damien Granet",
+    "pronouns": "",
+    "headline": "Governance & communications officer · International Relations (Honours) at the ANU",
+    "shortIntro": "I work on internal policy, risk and communications at Platypus Research & Development in Canberra, while finishing an honours degree in International Relations. Outside of work you'll usually find me behind a drum kit.",
+    "location": "Canberra, Australia",
+    "profileImage": {
+      "src": "/images/profile-placeholder.svg",
+      "alt": "Placeholder portrait of Damien Granet"
+    }
+  },
+  "sections": {
+    "about": true,
+    "experience": true,
+    "education": true,
+    "skills": true,
+    "highlights": true,
+    "interests": true,
+    "contact": true
+  },
+  "about": [
+    "I'm Damien — a Canberra-based governance and communications officer at Platypus Research & Development, where I've worked since late 2023. Day to day that means developing and carrying out internal policy, keeping our WHS and DISP obligations in order, assessing and mitigating risk, and lending a hand with graphic design and whatever else needs troubleshooting.",
+    "Before that I spent a couple of years tutoring — mostly English literature, with some high school maths — both independently and through agencies. For several years I also co-ran Kiwi and Rooster, a small ad hoc food and catering business, with a friend in Sydney.",
+    "I'm currently completing a Bachelor of International Relations (Honours) at the Australian National University, where I've been involved in college life at Burton & Garran and Griffin Hall, the ANU Music Society, the French Collective, and Effective Altruism. When I'm not working or studying, I drum with the Canberra band Bronze Age Collapse."
+  ],
+  "experience": [
+    {
+      "role": "Governance and Communications Officer",
+      "organisation": "Platypus Research & Development",
+      "type": "Part-time",
+      "start": "Nov 2023",
+      "end": "Present",
+      "location": "Canberra, ACT",
+      "summary": "Internal policy development and execution across the organisation.",
+      "details": [
+        "Develop and implement internal policy, including WHS and DISP compliance.",
+        "Carry out risk assessment and mitigation.",
+        "Provide graphic design and communications support.",
+        "General ad hoc troubleshooting and organisational support."
+      ]
+    },
+    {
+      "role": "Private Tutor",
+      "organisation": "Self-employed",
+      "type": "Self-employed",
+      "start": "Feb 2022",
+      "end": "Nov 2023",
+      "location": "Canberra, ACT",
+      "summary": "Tutored English literature primarily, along with some high school mathematics.",
+      "details": []
+    },
+    {
+      "role": "Part Owner",
+      "organisation": "Kiwi and Rooster",
+      "type": "Self-employed",
+      "start": "Jan 2018",
+      "end": "Nov 2023",
+      "location": "Ryde, NSW",
+      "summary": "Co-ran an ad hoc food and catering business with a friend.",
+      "details": []
+    },
+    {
+      "role": "Tutor",
+      "organisation": "KIS Academics",
+      "type": "Part-time",
+      "start": "Jan 2023",
+      "end": "Apr 2023",
+      "location": "Canberra, ACT (Remote)",
+      "summary": "Tutored students remotely through KIS Academics.",
+      "details": []
+    },
+    {
+      "role": "Tutor",
+      "organisation": "Big Improvements Tutoring",
+      "type": "Part-time",
+      "start": "Aug 2022",
+      "end": "Jan 2023",
+      "location": "Canberra, ACT",
+      "summary": "Tutored students through Big Improvements Tutoring.",
+      "details": []
+    }
+  ],
+  "education": [
+    {
+      "institution": "The Australian National University",
+      "qualification": "Bachelor of International Relations (Honours)",
+      "field": "International Relations",
+      "start": "Feb 2022",
+      "end": "Dec 2026 (expected)",
+      "notes": "Activities and societies: Effective Altruism, Burton & Garran Hall, Griffin Hall, ANU Music Society, French Collective."
+    }
+  ],
+  "skills": [
+    {
+      "category": "Governance & policy",
+      "items": [
+        "Internal policy development",
+        "WHS compliance",
+        "DISP compliance",
+        "Risk assessment and mitigation",
+        "Project management"
+      ]
+    },
+    {
+      "category": "Communications",
+      "items": [
+        "Written communication",
+        "Graphic design"
+      ]
+    },
+    {
+      "category": "Teaching",
+      "items": [
+        "English literature tutoring",
+        "High school mathematics tutoring",
+        "Patience"
+      ]
+    }
+  ],
+  "highlights": [
+    {
+      "title": "Bronze Age Collapse",
+      "description": "Drummer with Bronze Age Collapse, a Canberra band. Gigs, releases and everything else are on the band site.",
+      "link": "https://bronzeagecollapse.band/",
+      "linkLabel": "Visit the band site",
+      "image": "",
+      "imageAlt": "",
+      "date": ""
+    },
+    {
+      "title": "Kiwi and Rooster",
+      "description": "Co-founded and ran a small ad hoc food and catering business with a friend for almost six years, handling everything from cooking to logistics.",
+      "link": "",
+      "linkLabel": "",
+      "image": "",
+      "imageAlt": "",
+      "date": "2018–2023"
+    }
+  ],
+  "interests": [
+    {
+      "label": "Drumming",
+      "note": "Plays with Bronze Age Collapse in Canberra.",
+      "link": "https://bronzeagecollapse.band/"
+    },
+    {
+      "label": "Music",
+      "note": "Member of the ANU Music Society.",
+      "link": ""
+    },
+    {
+      "label": "French language and culture",
+      "note": "Member of the ANU French Collective.",
+      "link": ""
+    },
+    {
+      "label": "Effective altruism",
+      "note": "Involved with the ANU Effective Altruism society.",
+      "link": ""
+    }
+  ],
+  "contact": {
+    "intro": "The easiest way to reach me is through one of the options below.",
+    "linkedin": "https://www.linkedin.com/in/REPLACE-ME",
+    "emailAlias": "",
+    "formEndpoint": "",
+    "formProvider": "formspree"
+  },
+  "socialLinks": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/REPLACE-ME"
+    },
+    {
+      "label": "Bronze Age Collapse",
+      "url": "https://bronzeagecollapse.band/"
+    }
+  ],
+  "privacyNotice": "This site does not collect personal information, set cookies, or run analytics. If you use the contact form, your message is delivered by the form provider named on the form and is not stored on this site."
+}

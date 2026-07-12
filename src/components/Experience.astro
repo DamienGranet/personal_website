@@ -1,0 +1,34 @@
+---
+import profile from '../data/profile.json';
+const jobs = profile.experience ?? [];
+---
+{profile.sections.experience && jobs.length > 0 && (
+  <section class="block" id="experience" aria-labelledby="experience-heading">
+    <div class="wrap">
+      <p class="eyebrow">Experience</p>
+      <h2 id="experience-heading">Where I've worked</h2>
+      {jobs.map((job) => (
+        <article class="entry">
+          <p class="when">{job.start} – {job.end}</p>
+          <div>
+            <h3>{job.role}</h3>
+            <p class="where">
+              <span class="org">{job.organisation}</span>
+              {job.type && <> · {job.type}</>}
+              {job.location && <> · {job.location}</>}
+            </p>
+            {job.summary && <p>{job.summary}</p>}
+            {job.details && job.details.length > 0 && (
+              <details>
+                <summary>More about this role</summary>
+                <ul>
+                  {job.details.map((d) => <li>{d}</li>)}
+                </ul>
+              </details>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
