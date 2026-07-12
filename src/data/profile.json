@@ -2,15 +2,15 @@
   "meta": {
     "siteUrl": "https://damiengranet.com",
     "seoTitle": "Damien Granet — Governance, Communications & International Relations",
-    "seoDescription": "Damien Granet — governance and communications at Platypus R&D, International Relations (Honours) at the ANU, and drummer of Bronze Age Collapse.",
+    "seoDescription": "Damien Granet — governance and communications at Platypus R&D, International Relations (Honours) and PPE at the ANU, and drummer of Bronze Age Collapse.",
     "githubRepo": "DamienGranet/personal_website",
-    "lastUpdated": "2026-07-11"
+    "lastUpdated": "2026-07-12"
   },
   "person": {
     "name": "Damien Granet",
     "pronouns": "",
     "headline": "Governance & communications officer · International Relations (Honours) at the ANU",
-    "shortIntro": "I work on internal policy, risk and communications at Platypus Research & Development in Canberra, while finishing an honours degree in International Relations. Outside of work you'll usually find me behind a drum kit.",
+    "shortIntro": "I work on internal policy, risk and communications at Platypus Research & Development in Canberra, while finishing an honours year in International Relations at the ANU — alongside a completed degree in Politics, Philosophy and Economics. Outside of work you'll usually find me behind a drum kit.",
     "location": "Canberra, Australia",
     "profileImage": {
       "src": "/images/damien.jpg",
@@ -29,7 +29,7 @@
   "about": [
     "I'm Damien — a Canberra-based governance and communications officer at Platypus Research & Development, where I've worked since late 2023. Day to day that means developing and carrying out internal policy, keeping our WHS and DISP obligations in order, assessing and mitigating risk, and lending a hand with graphic design and whatever else needs troubleshooting.",
     "Before that I spent a couple of years tutoring — mostly English literature, with some high school maths — both independently and through agencies. For several years I also co-ran Kiwi and Rooster, a small ad hoc food and catering business, with a friend in Sydney.",
-    "I'm currently completing a Bachelor of International Relations (Honours) at the Australian National University, where I've been involved in college life at Burton & Garran and Griffin Hall, the ANU Music Society, the French Collective, and Effective Altruism. When I'm not working or studying, I drum with the Canberra band Bronze Age Collapse."
+    "I'm in the final stretch of an honours year in International Relations at the Australian National University, due to wrap up around October 2026, having already completed a Bachelor of Politics, Philosophy and Economics there. Along the way I've been involved in college life at Burton & Garran and Griffin Hall, the ANU Music Society, the French Collective, and Effective Altruism. When I'm not working or studying, I drum with the Canberra band Bronze Age Collapse."
   ],
   "experience": [
     {
@@ -94,8 +94,16 @@
       "qualification": "Bachelor of International Relations (Honours)",
       "field": "International Relations",
       "start": "Feb 2022",
-      "end": "Dec 2026 (expected)",
-      "notes": "Activities and societies: Effective Altruism, Burton & Garran Hall, Griffin Hall, ANU Music Society, French Collective."
+      "end": "Oct 2026 (expected)",
+      "notes": "Currently completing the honours year, with graduation expected at the end of 2026. Activities and societies: Effective Altruism, Burton & Garran Hall, Griffin Hall, ANU Music Society, French Collective."
+    },
+    {
+      "institution": "The Australian National University",
+      "qualification": "Bachelor of Politics, Philosophy and Economics",
+      "field": "Politics, Philosophy and Economics",
+      "start": "Feb 2022",
+      "end": "Completed",
+      "notes": ""
     }
   ],
   "skills": [
