@@ -3,7 +3,7 @@
     "siteUrl": "https://damiengranet.com",
     "seoTitle": "Damien Granet — Governance, Communications & International Relations",
     "seoDescription": "Damien Granet — governance and communications at Platypus R&D, International Relations (Honours) at the ANU, and drummer of Bronze Age Collapse.",
-    "githubRepo": "REPLACE-ME/damiengranet.com",
+    "githubRepo": "DamienGranet/personal_website",
     "lastUpdated": "2026-07-11"
   },
   "person": {
@@ -13,8 +13,8 @@
     "shortIntro": "I work on internal policy, risk and communications at Platypus Research & Development in Canberra, while finishing an honours degree in International Relations. Outside of work you'll usually find me behind a drum kit.",
     "location": "Canberra, Australia",
     "profileImage": {
-      "src": "/images/profile-placeholder.svg",
-      "alt": "Placeholder portrait of Damien Granet"
+      "src": "/images/damien.jpg",
+      "alt": "Damien Granet grinning with both arms raised outside Cypher Brewing Co."
     }
   },
   "sections": {
@@ -169,7 +169,7 @@
   ],
   "contact": {
     "intro": "The easiest way to reach me is through one of the options below.",
-    "linkedin": "https://www.linkedin.com/in/REPLACE-ME",
+    "linkedin": "https://www.linkedin.com/in/damien-granet-b5ba10223/",
     "emailAlias": "",
     "formEndpoint": "",
     "formProvider": "formspree"
@@ -177,7 +177,7 @@
   "socialLinks": [
     {
       "label": "LinkedIn",
-      "url": "https://www.linkedin.com/in/REPLACE-ME"
+      "url": "https://www.linkedin.com/in/damien-granet-b5ba10223/"
     },
     {
       "label": "Bronze Age Collapse",

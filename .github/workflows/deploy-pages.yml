@@ -1,0 +1,62 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two deployments at once; cancel superseded runs.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate profile data
+        run: npm run validate-content
+
+      - name: Build the site
+        run: npx astro build
+
+      - name: Quality checks on the built output
+        run: |
+          test -f dist/CNAME || (echo "CNAME missing from build output" && exit 1)
+          test -f dist/404.html || (echo "404.html missing from build output" && exit 1)
+          test -f dist/robots.txt || (echo "robots.txt missing" && exit 1)
+          test -f dist/sitemap-index.xml || (echo "sitemap missing" && exit 1)
+          grep -q "damiengranet.com" dist/CNAME || (echo "CNAME has wrong domain" && exit 1)
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

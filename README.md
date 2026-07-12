@@ -43,9 +43,9 @@ Other scripts:
    (apex `A`/`AAAA` records plus a `www` CNAME).
 5. **Enable HTTPS.** Once GitHub shows the DNS check as successful (can take up to a
    day), tick *Enforce HTTPS* in *Settings → Pages*.
-6. **Fill in the placeholders.** Search `profile.json` for `REPLACE-ME` (LinkedIn URL
-   and the GitHub repo name) and replace the placeholder profile photo — see the
-   editing guide.
+6. **Content is already filled in.** LinkedIn, the GitHub repo
+   (`DamienGranet/personal_website`) and the profile photo are set. To change any of
+   them later, see the editing guide.
 
 After that, every push to `main` automatically validates the content, builds the site,
 runs basic quality checks, and deploys — see

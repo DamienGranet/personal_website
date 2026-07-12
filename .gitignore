@@ -1,1 +1,14 @@
-.idea/*
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# IDE
+.idea/
+.vscode/
+
+# OS / misc
+.DS_Store
+*.log
